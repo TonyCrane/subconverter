@@ -186,93 +186,93 @@ int main(int argc, char *argv[])
 
     webServer.append_response("GET", "/version", "text/plain", [](RESPONSE_CALLBACK_ARGS) -> std::string
     {
-        return "subconverter " VERSION " backend\n";
+        return "subconverter " VERSION " backend (TonyCrane modified)\n";
     });
 
-    webServer.append_response("GET", "/refreshrules", "text/plain", [](RESPONSE_CALLBACK_ARGS) -> std::string
-    {
-        if(!global.accessToken.empty())
-        {
-            std::string token = getUrlArg(request.argument, "token");
-            if(token != global.accessToken)
-            {
-                response.status_code = 403;
-                return "Forbidden\n";
-            }
-        }
-        refreshRulesets(global.customRulesets, global.rulesetsContent);
-        return "done\n";
-    });
+    // webServer.append_response("GET", "/refreshrules", "text/plain", [](RESPONSE_CALLBACK_ARGS) -> std::string
+    // {
+    //     if(!global.accessToken.empty())
+    //     {
+    //         std::string token = getUrlArg(request.argument, "token");
+    //         if(token != global.accessToken)
+    //         {
+    //             response.status_code = 403;
+    //             return "Forbidden\n";
+    //         }
+    //     }
+    //     refreshRulesets(global.customRulesets, global.rulesetsContent);
+    //     return "done\n";
+    // });
 
-    webServer.append_response("GET", "/readconf", "text/plain", [](RESPONSE_CALLBACK_ARGS) -> std::string
-    {
-        if(!global.accessToken.empty())
-        {
-            std::string token = getUrlArg(request.argument, "token");
-            if(token != global.accessToken)
-            {
-                response.status_code = 403;
-                return "Forbidden\n";
-            }
-        }
-        readConf();
-        if(!global.updateRulesetOnRequest)
-            refreshRulesets(global.customRulesets, global.rulesetsContent);
-        return "done\n";
-    });
+    // webServer.append_response("GET", "/readconf", "text/plain", [](RESPONSE_CALLBACK_ARGS) -> std::string
+    // {
+    //     if(!global.accessToken.empty())
+    //     {
+    //         std::string token = getUrlArg(request.argument, "token");
+    //         if(token != global.accessToken)
+    //         {
+    //             response.status_code = 403;
+    //             return "Forbidden\n";
+    //         }
+    //     }
+    //     readConf();
+    //     if(!global.updateRulesetOnRequest)
+    //         refreshRulesets(global.customRulesets, global.rulesetsContent);
+    //     return "done\n";
+    // });
 
-    webServer.append_response("POST", "/updateconf", "text/plain", [](RESPONSE_CALLBACK_ARGS) -> std::string
-    {
-        if(!global.accessToken.empty())
-        {
-            std::string token = getUrlArg(request.argument, "token");
-            if(token != global.accessToken)
-            {
-                response.status_code = 403;
-                return "Forbidden\n";
-            }
-        }
-        std::string type = getUrlArg(request.argument, "type");
-        if(type == "form" || type == "direct")
-        {
-            fileWrite(global.prefPath, request.postdata, true);
-        }
-        else
-        {
-            response.status_code = 501;
-            return "Not Implemented\n";
-        }
+    // webServer.append_response("POST", "/updateconf", "text/plain", [](RESPONSE_CALLBACK_ARGS) -> std::string
+    // {
+    //     if(!global.accessToken.empty())
+    //     {
+    //         std::string token = getUrlArg(request.argument, "token");
+    //         if(token != global.accessToken)
+    //         {
+    //             response.status_code = 403;
+    //             return "Forbidden\n";
+    //         }
+    //     }
+    //     std::string type = getUrlArg(request.argument, "type");
+    //     if(type == "form" || type == "direct")
+    //     {
+    //         fileWrite(global.prefPath, request.postdata, true);
+    //     }
+    //     else
+    //     {
+    //         response.status_code = 501;
+    //         return "Not Implemented\n";
+    //     }
 
-        readConf();
-        if(!global.updateRulesetOnRequest)
-            refreshRulesets(global.customRulesets, global.rulesetsContent);
-        return "done\n";
-    });
+    //     readConf();
+    //     if(!global.updateRulesetOnRequest)
+    //         refreshRulesets(global.customRulesets, global.rulesetsContent);
+    //     return "done\n";
+    // });
 
-    webServer.append_response("GET", "/flushcache", "text/plain", [](RESPONSE_CALLBACK_ARGS) -> std::string
-    {
-        if(getUrlArg(request.argument, "token") != global.accessToken)
-        {
-            response.status_code = 403;
-            return "Forbidden";
-        }
-        flushCache();
-        return "done";
-    });
+    // webServer.append_response("GET", "/flushcache", "text/plain", [](RESPONSE_CALLBACK_ARGS) -> std::string
+    // {
+    //     if(getUrlArg(request.argument, "token") != global.accessToken)
+    //     {
+    //         response.status_code = 403;
+    //         return "Forbidden";
+    //     }
+    //     flushCache();
+    //     return "done";
+    // });
 
     webServer.append_response("GET", "/sub", "text/plain;charset=utf-8", subconverter);
 
     webServer.append_response("HEAD", "/sub", "text/plain", subconverter);
 
-    webServer.append_response("GET", "/sub2clashr", "text/plain;charset=utf-8", simpleToClashR);
+    // webServer.append_response("GET", "/sub2clashr", "text/plain;charset=utf-8", simpleToClashR);
 
-    webServer.append_response("GET", "/surge2clash", "text/plain;charset=utf-8", surgeConfToClash);
+    // webServer.append_response("GET", "/surge2clash", "text/plain;charset=utf-8", surgeConfToClash);
 
-    webServer.append_response("GET", "/getruleset", "text/plain;charset=utf-8", getRuleset);
+    // webServer.append_response("GET", "/getruleset", "text/plain;charset=utf-8", getRuleset);
 
-    webServer.append_response("GET", "/getprofile", "text/plain;charset=utf-8", getProfile);
+    // webServer.append_response("GET", "/getprofile", "text/plain;charset=utf-8", getProfile);
 
-    webServer.append_response("GET", "/render", "text/plain;charset=utf-8", renderTemplate);
+    // webServer.append_response("GET", "/render", "text/plain;charset=utf-8", renderTemplate);
 
     if(!global.APIMode)
     {
