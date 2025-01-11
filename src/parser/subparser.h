@@ -45,6 +45,7 @@ void explodeStdVless(std::string vless, Proxy &node);
 void explodeStdHysteria(std::string hysteria, Proxy &node);
 void explodeStdHysteria2(std::string hysteria2, Proxy &node);
 void explodeStdTUIC(std::string TUIC, Proxy &node);
+void explodeShadowrocketVless(std::string vless, Proxy &node);
 void explodeShadowrocket(std::string kit, Proxy &node);
 void explodeKitsunebi(std::string kit, Proxy &node);
 /// Parse a link

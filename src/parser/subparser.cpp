@@ -10,6 +10,7 @@
 #include "../utils/string_hash.h"
 #include "../utils/urlencode.h"
 #include "../utils/yamlcpp_extra.h"
+#include "../utils/logger.h"
 #include "config/proxy.h"
 #include "subparser.h"
 
@@ -202,7 +203,12 @@ void snellConstruct(Proxy &node, const std::string &group, const std::string &re
 
 void explodeVless(std::string vless, Proxy &node)
 {
-    if(regMatch(vless, "vless://(.*?)@(.*)"))
+    if(regMatch(vless, "vless://([A-Za-z0-9-_]+)\\?(.*)")) //shadowrocket style link
+    {
+        explodeShadowrocketVless(vless, node);
+        return;
+    }
+    else if(regMatch(vless, "vless://(.*?)@(.*)"))
     {
         explodeStdVless(vless, node);
         return;
@@ -1673,6 +1679,56 @@ void explodeStdVless(std::string vless, Proxy &node)
 
     vlessConstruct(node, XRAY_DEFAULT_GROUP, remarks, add, port, type, id, aid, net, "auto", flow, mode, path, host, "", tls, pbk, sid, fp);
     return;
+}
+
+void explodeShadowrocketVless(std::string rocket, Proxy &node)
+{
+    std::string add, port, type, id, aid, net = "tcp", flow, pbk, sid, fp, mode, path, host, tls, cipher, remarks;
+    std::string obfs; //for other style of link
+    std::string addition;
+    rocket = rocket.substr(8);
+
+    string_size pos = rocket.find("?");
+    addition = rocket.substr(pos + 1);
+    rocket.erase(pos);
+
+    if(regGetMatch(urlSafeBase64Decode(rocket), "(.*?):(.*)@(.*):(.*)", 5, 0, &cipher, &id, &add, &port))
+        return;
+    if(port == "0")
+        return;
+    remarks = urlDecode(getUrlArg(addition, "remarks"));
+    obfs = getUrlArg(addition, "obfs");
+    pbk = getUrlArg(addition,"pbk");
+    sid = getUrlArg(addition,"sid");
+    fp = getUrlArg(addition,"fp");
+
+    if(!obfs.empty())
+    {
+        if(obfs == "websocket")
+        {
+            net = "ws";
+            host = getUrlArg(addition, "obfsParam");
+            path = getUrlArg(addition, "path");
+        }
+    }
+    else
+    {
+        net = getUrlArg(addition, "network");
+        host = getUrlArg(addition, "wsHost");
+        path = getUrlArg(addition, "wspath");
+    }
+    tls = getUrlArg(addition, "tls") == "1" ? "tls" : "";
+    aid = getUrlArg(addition, "aid");
+
+    if(aid.empty())
+        aid = "0";
+
+    if(remarks.empty())
+        remarks = add + ":" + port;
+
+    
+    vlessConstruct(node, XRAY_DEFAULT_GROUP, remarks, add, port, type, id, aid, net, cipher, flow, mode, path, host, "", tls, pbk, sid, fp);
+    writeLog(0, "vlessConstruct finished: " + rocket);
 }
 
 void explodeShadowrocket(std::string rocket, Proxy &node)
