@@ -1902,6 +1902,14 @@ void explodeShadowrocketVless(std::string rocket, Proxy &node)
     }
     tls = getUrlArg(addition, "tls") == "1" ? "tls" : "";
     aid = getUrlArg(addition, "aid");
+    std::string sni = getUrlArg(addition, "sni");
+    std::string packet_encoding = getUrlArg(addition, "packet-encoding");
+    std::string alpn = getUrlArg(addition, "alpn");
+    std::vector<std::string> alpnList;
+    if (!alpn.empty()) {
+        alpnList.push_back(alpn);
+    }
+    std::string encryption = getUrlArg(addition, "encryption");
 
     if(aid.empty())
         aid = "0";
@@ -1910,7 +1918,7 @@ void explodeShadowrocketVless(std::string rocket, Proxy &node)
         remarks = add + ":" + port;
 
     
-    vlessConstruct(node, XRAY_DEFAULT_GROUP, remarks, add, port, type, id, aid, net, cipher, flow, mode, path, host, "", tls, pbk, sid, fp);
+    vlessConstruct(node, XRAY_DEFAULT_GROUP, remarks, add, port, type, id, aid, net, cipher, flow, mode, path, host, "", tls, pbk, sid, fp, sni, alpnList, packet_encoding, encryption);
     writeLog(0, "vlessConstruct finished: " + rocket);
 }
 
