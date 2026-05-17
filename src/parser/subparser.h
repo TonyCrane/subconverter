@@ -121,6 +121,7 @@ void explodeStdHysteria(std::string hysteria, Proxy &node);
 void explodeStdHysteria2(std::string hysteria2, Proxy &node);
 
 void explodeShadowrocket(std::string kit, Proxy &node);
+void explodeShadowrocketVless(std::string vless, Proxy &node);
 
 void explodeKitsunebi(std::string kit, Proxy &node);
 
